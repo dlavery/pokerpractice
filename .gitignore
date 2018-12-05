@@ -102,3 +102,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# macbook
+.DS_Store
+
+# virtual environment
+/lib
+/bin
+pip-selfcheck.json
+pyvenv.cfg
