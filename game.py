@@ -2,6 +2,7 @@ from deck import Deck
 from player import Player
 from card import Card
 from betting import Betting
+from gameexception import GameException
 
 class Game:
 # poker game
@@ -34,8 +35,6 @@ class Game:
         'highcard': 1
     }
 
-    __BLINDS = [100, 200, 300, 400, 500, 600, 800, 1000, 1500, 2000, 3000, 4000, 5000]
-
     def __init__(self, playerlimit=8, blindinterval=600):
         self.__deck = Deck()
         self.__players = []
@@ -44,6 +43,8 @@ class Game:
         self.__inprogress = False
         self.__playerlimit = playerlimit - 1
         self.__bettingengine = Betting(self.__players, blindinterval)
+        self.__blinds = (0, 0)
+        self.__allowedactions = ()
 
     def addplayer(self, player):
         # limit to 8 players
@@ -69,7 +70,11 @@ class Game:
         self.__board = []
         self.__hands = []
         self.__inprogress = True
-        self.__bettingengine.newhand()
+        self.__blinds = self.__bettingengine.newhand()
+        self.__allowedactions = ()
+
+    def getblinds(self):
+        return self.__blinds
 
     def hands(self):
         return self.__hands
@@ -109,10 +114,17 @@ class Game:
     def nextbet(self):
         if self.playersinhand() <= 1:
             return None
-        return self.__bettingengine.nextbet()
+        nextbet = self.__bettingengine.nextbet()
+        if nextbet == None:
+            self.__allowedactions = ()
+            return None
+        self.__allowedactions = nextbet[1]
+        return nextbet
 
     def playeract(self, player, action, amount=0):
-        self.__bettingengine.act(player, action, amount);
+        if action not in self.__allowedactions:
+            raise GameException('Action not allowed')
+        self.__bettingengine.act(player, action, amount)
 
     def getcurrentbet(self):
         return self.__bettingengine.currentbet()
@@ -123,6 +135,9 @@ class Game:
             if player.isactive():
                 no_of_players = no_of_players + 1
         return no_of_players
+
+    def getpot(self):
+        return self.__bettingengine.getpot()
 
     def winner(self):
         hands = []
@@ -354,6 +369,3 @@ class Game:
                 if len(pairhand) > 4:
                     break
         return pairhand
-
-class GameException(Exception):
-    pass

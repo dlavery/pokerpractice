@@ -1,13 +1,14 @@
 import sys
 from game import Game
 from player import Player
+from gameexception import GameException
 
 def do_betting():
   while True:
       actor = game.nextbet()
       if actor == None:
           break
-      print(actor[0].name() + ' to bet: ' + str(actor[1]) + '; current bet: ' + str(game.getcurrentbet()))
+      print(actor[0].name() + ' to bet: ' + str(actor[1]) + '; pot: ' + str(game.getpot()) + '; blinds: ' + str(game.getblinds()[0]) + ', ' + str(game.getblinds()[1]) + '; stack: ' + str(actor[0].getchips()) + '; current bet: ' + str(game.getcurrentbet()))
       act_split = ('',)
       while act_split[0] not in actor[1]:
           act = input('Action?')
@@ -19,7 +20,11 @@ def do_betting():
               betval = int(act_split[1])
           else:
               betval = 0
-          game.playeract(actor[0], act_split[0], betval)
+          try:
+              game.playeract(actor[0], act_split[0], betval)
+          except GameException as e:
+              print(str(e))
+              act_split = ('',)
 
 def main():
     global game
@@ -71,12 +76,12 @@ def main():
       for h in game.hands():
           print(str(h[0]) + ' ' + str(h[1]) + ' ' + str([x.tup() for x in h[2]]))
       if len(winners) == 1:
-          print(winners[0][0] + ' wins!')
+          print(winners[0][0] + ' wins ' + str(game.getpot()) + ' chips!')
       else:
           wintext = ''
           for winner in winners:
               wintext = wintext + winner[0] + ' '
-          print(wintext + 'chop!')
+          print(wintext + 'chop ' + str(game.getpot()) + ' chips!')
       print('-')
 
 main()

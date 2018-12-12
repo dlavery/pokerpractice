@@ -43,8 +43,11 @@ class Player:
     def subtractchips(self, chips):
         self.__chips = self.__chips - chips
 
+    def getchips(self):
+        return self.__chips
+
     def makebet(self, chips):
-        self.__lastbet = chips
+        self.__lastbet = self.__lastbet + chips
         self.subtractchips(chips)
 
     def getlastbet(self):
@@ -58,7 +61,7 @@ class Player:
 
     def acted(self):
         self.__acted = True
-        
+
     def hasacted(self):
         return self.__acted
 

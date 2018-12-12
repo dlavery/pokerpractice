@@ -1,5 +1,5 @@
 from datetime import datetime
-from bettingexception import BettingException
+from gameexception import GameException
 
 class Betting:
     # Betting module for poker
@@ -13,6 +13,7 @@ class Betting:
         self.__blindcount = 0
         self.__blindinterval = blindinterval
         self.__starttime = datetime.utcnow().timestamp()
+        self.__pot = 0
 
     def newhand(self):
         self.__pot = 0
@@ -32,31 +33,29 @@ class Betting:
         else:
             self.__betindex = 2
         self.__betcount = 0
-        self.__bettingover = False
         return self.__blinds
 
     def newround(self):
         self.__betindex = 0
         self.__betcount = 0
-        self.__bettingover = False
         self.__currentbet = 0
         for player in self.__players:
             player.clearbet()
 
     def nextbet(self):
-        if self.__bettingover == True:
+        if self.__betcount >= len(self.__players):
             return None
         nextplayer = self.__players[self.__betindex]
         while nextplayer.isactive() == False:
+            if nextplayer.getlastbet() == self.__currentbet:
+                return None
             self.__betindex = self.__betindex + 1
             if self.__betindex >= len(self.__players):
-                self.__bettingover = True
                 return None
             nextplayer = self.__players[self.__betindex]
         if self.__currentbet > nextplayer.getlastbet():
             options = ('call', 'raise', 'fold')
         elif self.__currentbet == nextplayer.getlastbet() and nextplayer.hasacted():
-            self.__bettingover = True
             return None
         elif self.__currentbet > 0:
             options = ('check', 'raise')
@@ -76,26 +75,28 @@ class Betting:
             pass
         elif action == 'bet':
             if amount < self.__blinds[1]:
-                raise BettingException("Bet minimum is big blind")
+                raise GameException("Bet minimum is big blind")
             player.makebet(amount)
             self.__currentbet = amount
+            self.__pot = self.__pot + amount
             self.__betcount = 1
         elif action == 'call':
-            player.makebet(self.__currentbet)
+            amount = self.__currentbet - player.getlastbet()
+            player.makebet(amount)
+            self.__pot = self.__pot + amount
         elif action == 'raise':
             raiseamount = amount - player.getlastbet()
             if raiseamount < self.__blinds[1]:
-                raise BettingException("Raise minimum is big blind")
+                raise GameException("Raise minimum is big blind")
             player.makebet(raiseamount)
             self.__currentbet = amount
+            self.__pot = self.__pot + raiseamount
             self.__betcount = 1
         elif action == 'fold':
             player.fold()
         else:
             pass
         player.acted()
-        if self.__betcount >= len(self.__players):
-            self.__bettingover = True
 
     def getpot(self):
         return self.__pot
