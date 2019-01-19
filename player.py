@@ -9,13 +9,11 @@ class Player:
         self.__id = uuid.uuid1()
         self.__chips = chipstack
         self.__lastbet = 0
-        self.__acted = False
         self.__active = True
 
     def reset(self):
         self.__hand = []
         self.__lastbet = 0
-        self.__acted = False
         self.__active = True
 
     def setid(self, id):
@@ -59,12 +57,5 @@ class Player:
     def isactive(self):
         return self.__active
 
-    def acted(self):
-        self.__acted = True
-
-    def hasacted(self):
-        return self.__acted
-
     def clearbet(self):
         self.__lastbet = 0
-        self.__acted = False

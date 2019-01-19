@@ -54,13 +54,15 @@ class Betting:
                 return None
             nextplayer = self.__players[self.__betindex]
         if self.__currentbet > nextplayer.getlastbet():
-            options = ('call', 'raise', 'fold')
-        elif self.__currentbet == nextplayer.getlastbet() and nextplayer.hasacted():
-            return None
+            if nextplayer.getchips() <= self.__currentbet:
+                options = ('fold', 'all-in')
+            else:
+                options = ('call', 'raise', 'fold', 'all-in')
         elif self.__currentbet > 0:
-            options = ('check', 'raise')
+            # big blind
+            options = ('check', 'raise', 'all-in')
         else:
-            options = ('check', 'bet')
+            options = ('check', 'bet', 'all-in')
         self.__betindex = self.__betindex + 1
         if self.__betindex >= len(self.__players):
             self.__betindex = 0
@@ -74,6 +76,8 @@ class Betting:
         if action == 'check':
             pass
         elif action == 'bet':
+            if amount > player.getchips():
+                raise GameException("Can't bet more than your stack")
             if amount < self.__blinds[1]:
                 raise GameException("Bet minimum is big blind")
             player.makebet(amount)
@@ -86,6 +90,8 @@ class Betting:
             self.__pot = self.__pot + amount
         elif action == 'raise':
             raiseamount = amount - player.getlastbet()
+            if raiseamount > player.getchips():
+                raise GameException("Can't bet more than your stack")
             if raiseamount < self.__blinds[1]:
                 raise GameException("Raise minimum is big blind")
             player.makebet(raiseamount)
@@ -96,7 +102,6 @@ class Betting:
             player.fold()
         else:
             pass
-        player.acted()
 
     def getpot(self):
         return self.__pot

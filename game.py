@@ -3,6 +3,7 @@ from player import Player
 from card import Card
 from betting import Betting
 from gameexception import GameException
+from gameoverexception import GameOverException
 
 class Game:
 # poker game
@@ -88,6 +89,8 @@ class Game:
                 player.deal(self.__deck.card())
 
     def flop(self):
+        if self.playersinhand() < 2:
+            raise GameOverException('Hand is won already')
         for i in range (0, 3):
             self.__board.append(self.__deck.card())
         self.__bettingengine.newround()
@@ -100,10 +103,14 @@ class Game:
         self.__board.append(self.__deck.card())  # turn one
 
     def turn(self):
+        if self.playersinhand() < 2:
+            raise GameOverException('Hand is won already')
         self.__bettingengine.newround()
         self.burnandturn()
 
     def river(self):
+        if self.playersinhand() < 2:
+            raise GameOverException('Hand is won already')
         self.__bettingengine.newround()
         self.burnandturn()
 
