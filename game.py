@@ -87,13 +87,14 @@ class Game:
         for i in range(0, 2):
             for player in self.__players:
                 player.deal(self.__deck.card())
+        self.__bettingengine.newround(Betting.PREFLOP)
 
     def flop(self):
         if self.playersinhand() < 2:
             raise GameOverException('Hand is won already')
         for i in range (0, 3):
             self.__board.append(self.__deck.card())
-        self.__bettingengine.newround()
+        self.__bettingengine.newround(Betting.FLOP)
 
     def showboard(self):
         return self.__board
@@ -105,13 +106,13 @@ class Game:
     def turn(self):
         if self.playersinhand() < 2:
             raise GameOverException('Hand is won already')
-        self.__bettingengine.newround()
+        self.__bettingengine.newround(Betting.TURN)
         self.burnandturn()
 
     def river(self):
         if self.playersinhand() < 2:
             raise GameOverException('Hand is won already')
-        self.__bettingengine.newround()
+        self.__bettingengine.newround(Betting.RIVER)
         self.burnandturn()
 
     def rotatedealer(self):

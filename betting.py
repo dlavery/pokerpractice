@@ -5,6 +5,10 @@ class Betting:
     # Betting module for poker
 
     __BLINDS = [100, 200, 300, 400, 500, 600, 800, 1000, 1500, 2000, 3000, 4000, 5000]
+    PREFLOP = 0
+    FLOP = 1
+    TURN = 2
+    RIVER = 3
 
     def __init__(self, players, blindinterval):
         self.__players = players
@@ -24,43 +28,61 @@ class Betting:
                 self.__blindcount = self.__blindcount + 1
             self.__blinds = (self.__BLINDS[self.__blindcount], self.__BLINDS[self.__blindcount] * 2)
             self.__starttime = ts
-        self.__players[0].makebet(self.__blinds[0])
-        self.__players[1].makebet(self.__blinds[1])
-        self.__pot = self.__pot + self.__blinds[0] + self.__blinds[1]
-        self.__currentbet = self.__blinds[1]
-        if len(self.__players) < 3:
-            self.__betindex = 0
-        else:
-            self.__betindex = 2
-        self.__betcount = 0
+        self.__pot = 0
+        self.__actcount = 0
+        self.__round = ''
+        self.__betindex = 0
+        self.__playercount = 0
         return self.__blinds
 
-    def newround(self):
-        self.__betindex = 0
-        self.__betcount = 0
-        self.__currentbet = 0
+    def newround(self, round):
+        self.__round = round
+        self.__playercount = 0
         for player in self.__players:
             player.clearbet()
+            if player.isactive():
+                self.__playercount = self.__playercount + 1
+        if self.__round == self.PREFLOP:
+            self.__players[0].smallblind(self.__blinds[0])
+            self.__players[1].bigblind(self.__blinds[1])
+            self.__pot = self.__pot + self.__blinds[0] + self.__blinds[1]
+            self.__currentbet = self.__blinds[1]
+            if self.__playercount > 2:
+                self.__betindex = 2
+            else:
+                self.__betindex = 1
+        else:
+            self.__currentbet = 0
+            self.__betindex = 0
+        self.__actcount = 0
 
     def nextbet(self):
-        if self.__betcount >= len(self.__players):
-            return None
         nextplayer = self.__players[self.__betindex]
         while nextplayer.isactive() == False:
-            if nextplayer.getlastbet() == self.__currentbet:
-                return None
             self.__betindex = self.__betindex + 1
             if self.__betindex >= len(self.__players):
-                return None
+                self.__betindex = 0
             nextplayer = self.__players[self.__betindex]
-        if self.__currentbet > nextplayer.getlastbet():
+        if self.__round == self.PREFLOP and nextplayer.isbigblind():
+            # big blind
+            if nextplayer.getlastbet() < self.__currentbet:
+                # someone else has (re)raised
+                options = ('call', 'raise', 'fold', 'all-in')
+            elif nextplayer.getlastbet() > self.__blinds[1]:
+                # big blind raised and it has now come back around
+                return None
+            else:
+                # big blind's first act
+                options = ('check', 'raise', 'all-in')
+        elif self.__actcount >= self.__playercount:
+            # been all the way around
+            return None
+        elif self.__currentbet > nextplayer.getlastbet():
+            # player has to act
             if nextplayer.getchips() <= self.__currentbet:
                 options = ('fold', 'all-in')
             else:
                 options = ('call', 'raise', 'fold', 'all-in')
-        elif self.__currentbet > 0:
-            # big blind
-            options = ('check', 'raise', 'all-in')
         else:
             options = ('check', 'bet', 'all-in')
         self.__betindex = self.__betindex + 1
@@ -72,7 +94,7 @@ class Betting:
         return self.__currentbet
 
     def act(self, player, action, amount):
-        self.__betcount = self.__betcount + 1
+        self.__actcount = self.__actcount + 1
         if action == 'check':
             pass
         elif action == 'bet':
@@ -83,7 +105,7 @@ class Betting:
             player.makebet(amount)
             self.__currentbet = amount
             self.__pot = self.__pot + amount
-            self.__betcount = 1
+            self.__actcount = 1
         elif action == 'call':
             amount = self.__currentbet - player.getlastbet()
             player.makebet(amount)
@@ -97,7 +119,9 @@ class Betting:
             player.makebet(raiseamount)
             self.__currentbet = amount
             self.__pot = self.__pot + raiseamount
-            self.__betcount = 1
+            self.__actcount = 1
+        elif action == 'all-in':
+            pass
         elif action == 'fold':
             player.fold()
         else:

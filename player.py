@@ -10,11 +10,16 @@ class Player:
         self.__chips = chipstack
         self.__lastbet = 0
         self.__active = True
+        self.__pot = 0
+        self.__smallblind = False
+        self.__bigblind = False
 
     def reset(self):
         self.__hand = []
         self.__lastbet = 0
         self.__active = True
+        self.__smallblind = False
+        self.__bigblind = False
 
     def setid(self, id):
         self.__id = id
@@ -47,6 +52,17 @@ class Player:
     def makebet(self, chips):
         self.__lastbet = self.__lastbet + chips
         self.subtractchips(chips)
+
+    def smallblind(self, chips):
+        self.__smallblind = True
+        self.makebet(chips)
+
+    def bigblind(self, chips):
+        self.__bigblind = True
+        self.makebet(chips)
+
+    def isbigblind(self):
+        return self.__bigblind
 
     def getlastbet(self):
         return self.__lastbet
