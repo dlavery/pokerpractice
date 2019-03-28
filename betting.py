@@ -84,7 +84,6 @@ class Betting:
             else:
                 options = ('call', 'raise', 'fold', 'all-in')
         else:
-            print(self.__actcount, self.__playercount)
             options = ('check', 'bet', 'all-in')
         self.__betindex = self.__betindex + 1
         if self.__betindex >= len(self.__players):
