@@ -8,7 +8,7 @@ def do_betting():
       actor = game.nextbet()
       if actor == None:
           break
-      print(actor[0].name() + ' (' + str(actor[0].getchips()) + ' chips) to bet: ' + str(actor[1]) + '; pot: ' + str(game.getpot()) + '; blinds: ' + str(game.getblinds()[0]) + ', ' + str(game.getblinds()[1]) + '; stack: ' + str(actor[0].getchips()) + '; current bet: ' + str(game.getcurrentbet()))
+      print(actor[0].name() + ' to bet: ' + str(actor[1]) + '; pot: ' + str(game.getpot()) + '; blinds: ' + str(game.getblinds()[0]) + ', ' + str(game.getblinds()[1]) + '; stack: ' + str(actor[0].getchips()) + '; current bet: ' + str(game.getcurrentbet()))
       act_split = ('',)
       while act_split[0] not in actor[1]:
           act = input('Action?')
@@ -17,7 +17,10 @@ def do_betting():
               act_split = ('',)
               continue
           if len(act_split) > 1:
-              betval = int(act_split[1])
+              try:
+                  betval = int(act_split[1])
+              except ValueError as e:
+                  betval = 0
           else:
               betval = 0
           try:

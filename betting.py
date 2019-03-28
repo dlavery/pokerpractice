@@ -84,6 +84,7 @@ class Betting:
             else:
                 options = ('call', 'raise', 'fold', 'all-in')
         else:
+            print(self.__actcount, self.__playercount)
             options = ('check', 'bet', 'all-in')
         self.__betindex = self.__betindex + 1
         if self.__betindex >= len(self.__players):
@@ -106,6 +107,7 @@ class Betting:
             self.__currentbet = amount
             self.__pot = self.__pot + amount
             self.__actcount = 1
+            self.recount_players()
         elif action == 'call':
             amount = self.__currentbet - player.getlastbet()
             player.makebet(amount)
@@ -120,12 +122,19 @@ class Betting:
             self.__currentbet = amount
             self.__pot = self.__pot + raiseamount
             self.__actcount = 1
+            self.recount_players()
         elif action == 'all-in':
             pass
         elif action == 'fold':
             player.fold()
         else:
             pass
+
+    def recount_players(self):
+        self.__playercount = 0
+        for player in self.__players:
+            if player.isactive():
+                self.__playercount = self.__playercount + 1
 
     def getpot(self):
         return self.__pot
