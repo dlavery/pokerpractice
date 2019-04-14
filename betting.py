@@ -123,7 +123,16 @@ class Betting:
             self.__actcount = 1
             self.recount_players()
         elif action == 'all-in':
-            pass
+            allinamount = player.getchips()
+            if allinamount <= 0:
+                raise GameException("Already all in")
+            totalbet = allinamount + player.getlastbet()
+            if totalbet > self.__currentbet:
+                self.__currentbet = totalbet
+            player.makebet(allinamount)
+            self.__pot = self.__pot + allinamount
+            self.__actcount = 1
+            self.recount_players()
         elif action == 'fold':
             player.fold()
         else:

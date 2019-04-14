@@ -591,20 +591,20 @@ class TestGame(unittest.TestCase):
             pass
         finally:
             winners = game.winner()
-        win = 800 / len(winners)
+        win = int(800 / len(winners))
         winningnames = []
         for winner in winners:
             if winner[0] == 'Bob':
-                self.assertEqual(bob.getchips(), (4800 + win))
+                self.assertIn(bob.getchips(), (4800 + win, 4801 + win))
                 winningnames.append('Bob')
             elif winner[0] == 'Alice':
-                self.assertEqual(alice.getchips(), (4800 + win))
+                self.assertIn(alice.getchips(), (4800 + win, 4801 + win))
                 winningnames.append('Alice')
             elif winner[0] == 'John':
-                self.assertEqual(john.getchips(), (4800 + win))
+                self.assertIn(john.getchips(), (4800 + win, 4801 + win))
                 winningnames.append('John')
             else:
-                self.assertEqual(jill.getchips(), (4800 + win))
+                self.assertIn(jill.getchips(), (4800 + win, 4801 + win))
                 winningnames.append('Jill')
         if 'Bob' not in winningnames:
             self.assertEqual(bob.getchips(), 4800)
@@ -657,17 +657,17 @@ class TestGame(unittest.TestCase):
             pass
         finally:
             winners = game.winner()
-        win = 3200 / len(winners)
+        win = int(3200 / len(winners))
         winningnames = []
         for winner in winners:
             if winner[0] == 'Bob':
-                self.assertEqual(bob.getchips(), (4000 + win))
+                self.assertIn(bob.getchips(), (4000 + win, 4001 + win))
                 winningnames.append('Bob')
             elif winner[0] == 'John':
-                self.assertEqual(john.getchips(), (4000 + win))
+                self.assertIn(john.getchips(), (4000 + win, 4001 + win))
                 winningnames.append('John')
             else:
-                self.assertEqual(jill.getchips(), (4000 + win))
+                self.assertIn(jill.getchips(), (4000 + win, 4001 + win))
                 winningnames.append('Jill')
         self.assertEqual(alice.getchips(), 4800)
         if 'Bob' not in winningnames:
@@ -729,20 +729,20 @@ class TestGame(unittest.TestCase):
             pass
         finally:
             winners = game.winner()
-        win = 4800 / len(winners)
+        win = int(4800 / len(winners))
         winningnames = []
         for winner in winners:
             if winner[0] == 'Bob':
-                self.assertEqual(bob.getchips(), (3800 + win))
+                self.assertIn(bob.getchips(), (3800 + win, 3801 + win))
                 winningnames.append('Bob')
             elif winner[0] == 'Alice':
-                self.assertEqual(alice.getchips(), (3800 + win))
+                self.assertIn(alice.getchips(), (3800 + win, 3801 + win))
                 winningnames.append('Alice')
             elif winner[0] == 'John':
-                self.assertEqual(john.getchips(), (3800 + win))
+                self.assertIn(john.getchips(), (3800 + win, 3801 + win))
                 winningnames.append('John')
             else:
-                self.assertEqual(jill.getchips(), (3800 + win))
+                self.assertIn(jill.getchips(), (3800 + win, 3801 + win))
                 winningnames.append('Jill')
         if 'Bob' not in winningnames:
             self.assertEqual(bob.getchips(), 3800)
@@ -787,20 +787,20 @@ class TestGame(unittest.TestCase):
             pass
         finally:
             winners = game.winner()
-        win = 800 / len(winners)
+        win = int(800 / len(winners))
         winningnames = []
         for winner in winners:
             if winner[0] == 'Bob':
-                self.assertEqual(bob.getchips(), (4800 + win))
+                self.assertIn(bob.getchips(), (4800 + win, 4801 + win))
                 winningnames.append('Bob')
             elif winner[0] == 'Alice':
-                self.assertEqual(alice.getchips(), (4800 + win))
+                self.assertIn(alice.getchips(), (4800 + win, 4801 + win))
                 winningnames.append('Alice')
             elif winner[0] == 'John':
-                self.assertEqual(john.getchips(), (4800 + win))
+                self.assertIn(john.getchips(), (4800 + win, 4801 + win))
                 winningnames.append('John')
             else:
-                self.assertEqual(jill.getchips(), (4800 + win))
+                self.assertIn(jill.getchips(), (4800 + win, 4801 + win))
                 winningnames.append('Jill')
         if 'Bob' not in winningnames:
             self.assertEqual(bob.getchips(), 4800)
@@ -841,20 +841,20 @@ class TestGame(unittest.TestCase):
             pass
         finally:
             winners = game.winner()
-        win = 800 / len(winners)
+        win = int(800 / len(winners))
         winningnames = []
         for winner in winners:
             if winner[0] == 'Bob':
-                self.assertEqual(bob.getchips(), (bobchips - 200 + win))
+                self.assertIn(bob.getchips(), (bobchips - 200 + win, bobchips - 199 + win))
                 winningnames.append('Bob')
             elif winner[0] == 'Alice':
-                self.assertEqual(alice.getchips(), (alicechips - 200 + win))
+                self.assertIn(alice.getchips(), (alicechips - 200 + win, alicechips - 199 + win))
                 winningnames.append('Alice')
             elif winner[0] == 'John':
-                self.assertEqual(john.getchips(), (johnchips - 200 + win))
+                self.assertIn(john.getchips(), (johnchips - 200 + win, johnchips - 199 + win))
                 winningnames.append('John')
             else:
-                self.assertEqual(jill.getchips(), (jillchips - 200 + win))
+                self.assertIn(jill.getchips(), (jillchips - 200 + win, jillchips - 199 + win))
                 winningnames.append('Jill')
         if 'Bob' not in winningnames:
             self.assertEqual(bob.getchips(), bobchips - 200)
@@ -864,6 +864,197 @@ class TestGame(unittest.TestCase):
             self.assertEqual(john.getchips(), johnchips - 200)
         if 'Jill' not in winningnames:
             self.assertEqual(jill.getchips(), jillchips - 200)
+
+    def test_raising(self):
+        try:
+            game = Game()
+            alice = Player('Alice')
+            bob = Player('Bob')
+            john = Player('John')
+            jill = Player('Jill')
+            game.addplayer(alice)
+            game.addplayer(bob)
+            game.addplayer(john)
+            game.addplayer(jill)
+            game.newhand()
+            game.deal()
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'John')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Jill')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Alice')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Bob')
+            game.playeract(actor[0], 'check', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor, None)
+            game.flop()
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Alice')
+            game.playeract(actor[0], 'bet', 400)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Bob')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'John')
+            game.playeract(actor[0], 'raise', 500)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Jill')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Alice')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Bob')
+            game.playeract(actor[0], 'fold', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor, None)
+            game.turn()
+            game.river()
+        except GameOverException as e:
+            pass
+        finally:
+            winners = game.winner()
+        win = int(2700 / len(winners))
+        winningnames = []
+        for winner in winners:
+            if winner[0] == 'Bob':
+                self.assertIn(bob.getchips(), (4400 + win, 4400 + win))
+                winningnames.append('Bob')
+            elif winner[0] == 'Alice':
+                self.assertIn(alice.getchips(), (4300 + win, 4300 + win))
+                winningnames.append('Alice')
+            elif winner[0] == 'John':
+                self.assertIn(john.getchips(), (4300 + win, 4300 + win))
+                winningnames.append('John')
+            else:
+                self.assertIn(jill.getchips(), (4300 + win, 4300 + win))
+                winningnames.append('Jill')
+        if 'Bob' not in winningnames:
+            self.assertEqual(bob.getchips(), 4400)
+        if 'Alice' not in winningnames:
+            self.assertEqual(alice.getchips(), 4300)
+        if 'John' not in winningnames:
+            self.assertEqual(john.getchips(), 4300)
+        if 'Jill' not in winningnames:
+            self.assertEqual(jill.getchips(), 4300)
+
+    def test_fold_then_raise(self):
+        try:
+            game = Game()
+            alice = Player('Alice')
+            bob = Player('Bob')
+            john = Player('John')
+            jill = Player('Jill')
+            game.addplayer(alice)
+            game.addplayer(bob)
+            game.addplayer(john)
+            game.addplayer(jill)
+            game.newhand()
+            game.deal()
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'John')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Jill')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Alice')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Bob')
+            game.playeract(actor[0], 'check', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor, None)
+            game.flop()
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Alice')
+            game.playeract(actor[0], 'bet', 200)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Bob')
+            game.playeract(actor[0], 'fold', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'John')
+            game.playeract(actor[0], 'raise', 500)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Jill')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Alice')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor, None)
+        except GameException as e1:
+            raise e1
+        except GameOverException as e2:
+            raise e2
+
+    def test_big_blind_all_in(self):
+        try:
+            game = Game()
+            alice = Player('Alice')
+            bob = Player('Bob')
+            john = Player('John')
+            jill = Player('Jill')
+            game.addplayer(alice)
+            game.addplayer(bob)
+            game.addplayer(john)
+            game.addplayer(jill)
+            game.newhand()
+            game.deal()
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'John')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Jill')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Alice')
+            game.playeract(actor[0], 'call', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Bob')
+            game.playeract(actor[0], 'all-in', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'John')
+            game.playeract(actor[0], 'all-in', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Jill')
+            game.playeract(actor[0], 'fold', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor[0].name(), 'Alice')
+            game.playeract(actor[0], 'fold', 0)
+            actor = game.nextbet()
+            self.assertEqual(actor, None)
+            game.flop()
+            game.turn()
+            game.river()
+        except GameException as e1:
+            raise e1
+        except GameOverException as e2:
+            raise e2
+        finally:
+            winners = game.winner()
+        win = int(10400 / len(winners))
+        winningnames = []
+        for winner in winners:
+            if winner[0] == 'Bob':
+                self.assertIn(bob.getchips(), (win, win + 1))
+                winningnames.append('Bob')
+            elif winner[0] == 'Alice':
+                raise Exception('Alice has folded')
+            elif winner[0] == 'John':
+                self.assertIn(john.getchips(), (win, win + 1))
+                winningnames.append('John')
+            else:
+                raise Exception('Jill has folded')
+        if 'Bob' not in winningnames:
+            self.assertEqual(bob.getchips(), 0)
+        if 'John' not in winningnames:
+            self.assertEqual(john.getchips(), 0)
 
 if __name__ == '__main__':
     unittest.main()
