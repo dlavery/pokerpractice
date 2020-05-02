@@ -1,3 +1,4 @@
+from blindtimer import BlindTimer
 from deck import Deck
 from player import Player
 from card import Card
@@ -43,7 +44,8 @@ class Game:
         self.__hands = []
         self.__inprogress = False
         self.__playerlimit = playerlimit - 1
-        self.__bettingengine = Betting(self.__players, blindinterval)
+        self.__blindtimer = BlindTimer(blindinterval)
+        self.__bettingengine = Betting(self.__players, self.__blindtimer)
         self.__blinds = (0, 0)
         self.__allowedactions = ()
 
@@ -71,7 +73,8 @@ class Game:
         self.__board = []
         self.__hands = []
         self.__inprogress = True
-        self.__blinds = self.__bettingengine.newhand()
+        self.__blinds = self.__blindtimer.getblinds()
+        self.__bettingengine.newhand()
         self.__allowedactions = ()
 
     def getblinds(self):

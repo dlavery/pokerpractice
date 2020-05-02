@@ -29,9 +29,9 @@ class Hand:
         'highcard': 1
     }
 
-    def __init__(self, playerlimit=8, blindinterval=600):
-        self.__deck = Deck()
-        self.__players = []
+    def __init__(self, deck, players):
+        self.__deck = deck
+        self.__players = players
         self.__board = []
         self.__hands = []
         self.__inprogress = False
